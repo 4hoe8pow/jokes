@@ -1,6 +1,9 @@
 {
   "name": "jokes",
   "type": "module",
+  "engines": {
+    "node": ">=18.20.8"
+  },
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
