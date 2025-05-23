@@ -9,88 +9,37 @@ timestamp: 2025-05-23T10:00:00+09:00
 filename: dancing_links_solver
 ---
 
-# はじめに
+# 1. 緒言
 
-ダンシングリンク（Dancing Links, DLX）は、Donald E. Knuthが提唱したAlgorithm Xを効率的に実装する手法であり、Exact Cover問題を高速に解決できる。ナンプレ（数独）は各行・列・3×3ブロックに1から9までの数字が一度ずつ出現する制約を持ち、Exact Cover問題として定式化可能である。本稿では、提示のC#実装をベースに、行列の構築からCover／Uncover操作、再帰探索までの一連の流れを学術的視点で解説する。
+Dancing Links（以下、DLXと略記）は、Donald E. Knuthにより提唱されたAlgorithm Xを効率的に実装するためのデータ構造であり、Exact Cover問題に対する高速な解法を提供する。
+本稿では、数独（ナンプレ）をExact Cover問題として定式化し、DLXを用いた解法をC#により実装する過程を、理論的基盤の視点から考察したい。
 
-## Exact Cover問題とAlgorithm X
+# 2. Exact Cover問題と数独の定式化
 
-Exact Cover問題は、0–1行列 $A = (a_{ij})$ に対し、行の部分集合 $S$ を選び、すべての列 $j$ について
+Exact Cover問題とは、$0$ – $1$ 行列 $A = (a_{ij})$ に対して、行の部分集合 $S$ を選び、任意の列 $j$ について
 
 $$
 \sum_{i \in S} a_{ij} = 1
 $$
 
-を満たす $S$ を求める問題です。すなわち、各列をちょうど1回だけカバーする行の集合を選びます。
+を満たすような $S$ を求める問題である。すなわち、各列を重複なく一意にカバーする行の組合せを探索する問題である。
 
-ナンプレ（数独）は、次の制約をExact Cover問題として表現できます：
-- 各マス $(r, c)$ に数字 $n$ を1つだけ入れる
-- 各行 $r$ に各数字 $n$ が1回だけ現れる
-- 各列 $c$ に各数字 $n$ が1回だけ現れる
-- 各ブロック $b$ に各数字 $n$ が1回だけ現れる
+数独における制約は、以下の4点に要約され、すべてExact Cover形式に帰着できる：
 
-これらは、0–1行列の各行が $(r, c, n)$ の組み合わせ、各列が上記4制約に対応する形で構築されます。
+- 各マス $(r, c)$ には、ちょうど1つの数字 $n$ を配置する（マス制約）
+- 各行 $r$ には、数字 $1$〜$9$ が各1回現れる（行制約）
+- 各列 $c$ には、数字 $1$〜$9$ が各1回現れる（列制約）
+- 各 $3 \times 3$ ブロック $b$ には、数字 $1$〜$9$ が各1回現れる（ブロック制約）
 
-## ダンシングリンクの実装原理
+これらの制約は、各 $(r, c, n)$ の組に対して、対応する4つの列インデックスに変換され、合計 $9 \times 9 \times 9 = 729$ 行、$4 \times 81 = 324$ 列からなる $0$–$1$行列として構築される。
 
-ダンシングリンク（Dancing Links）は、0–1行列の各“1”をノードとして双方向連結リストで管理し、列・行の両方向に素早くアクセスできるようにしたデータ構造です。各ノードは上下左右のポインタを持ち、列ごとに`ColumnNode`、行ごとに`DLXNode`として接続されます。これにより、行や列の「カバー」「アンカバー」操作をノードのポインタ付け替えだけでO(1)で実現できます。
+# 3. Dancing Linksの構造と操作
 
-## C#コードの構造概要
+DLXは、上述の行列における“1”の位置を双方向連結リストのノードとして管理する手法である。各ノードは左右（同一行）および上下（同一列）にポインタを有し、列ヘッダにあたる`ColumnNode`を中心に、すべてのノードが環状に接続される。
 
-提示の実装は以下の主要クラスで構成される：
+この構造により、列の`Cover`／`Uncover`操作がポインタの付け替えのみで $\mathcal{O}(n)$ 時間にて実現され、バックトラックを伴う再帰探索において高速な復元が可能となる。
 
-- `DLXNode`／`ColumnNode`：双方向連結リストノード
-- `DLXMatrix`：Exact Cover行列の構築とCover／Uncover操作
-- `DLXSolver`：Algorithm Xの再帰探索および行シャッフル
-- `KandokuGenerator`：DLXを用いた解生成とマスク処理
-
-以降、行列構築から探索まで順を追って詳述する。
-
-## 1. Exact Cover行列の構築
-
-```csharp
-const int totalColumns = 4 * 81;
-var columnList = new ColumnNode[totalColumns];
-var head = new ColumnNode("head");
-
-// ヘッダを起点に324個の列ノードを生成し、双方向連結リスト化
-foreach (int columnIndex in Enumerable.Range(0, totalColumns))
-{
-    var columnNode = new ColumnNode(columnIndex.ToString());
-    columnList[columnIndex] = columnNode;
-    previousColumn.Right = columnNode;
-    columnNode.Left = previousColumn;
-    previousColumn = columnNode;
-}
-previousColumn.Right = head;
-head.Left = previousColumn;
-foreach (var (row, col, num) in
-  from row in Enumerable.Range(0, 9)
-  from col in Enumerable.Range(0, 9)
-  from num in Enumerable.Range(1, 9)
-  select (row, col, num))
-{
-    int block = row / 3 * 3 + (col / 3);
-    int[] columnIndices = [
-      row * 9 + col,
-      81 + row * 9 + (num - 1),
-      2 * 81 + col * 9 + (num - 1),
-      3 * 81 + block * 9 + (num - 1)
-    ];
-    AddDLXRow(columnList, row, col, num, columnIndices);
-}
-```
-
-上記C#コードでは、まず324個（9×9のマス、行、列、ブロックごとに81個ずつ）の`ColumnNode`を生成し、円環状の双方向連結リストとして接続します。次に、各マス・数字の組み合わせごとに4つの制約（マス、行、列、ブロック）を満たす列インデックスを計算し、`AddDLXRow`で該当する列ノードに`DLXNode`を追加します。これにより、各ノードが上下左右・列ノードと連結され、ダンシングリンクの基盤が構築されます。このとき、各 $(r, c, n)$ の組み合わせに対し、列インデックスは次のように計算されます：
-
-- マス制約: $i_1 = 9r + c$
-- 行制約: $i_2 = 81 + 9r + (n-1)$
-- 列制約: $i_3 = 2 \times 81 + 9c + (n-1)$
-- ブロック制約: $i_4 = 3 \times 81 + 9b + (n-1)$
-
-ここで $b = 3 \times \left\lfloor \frac{r}{3} \right\rfloor + \left\lfloor \frac{c}{3} \right\rfloor$ です。
-
-## 2. Cover／Uncover操作
+## 3.1 Cover／Uncoverの実装
 
 ```csharp
 public static void Cover(ColumnNode col)
@@ -120,9 +69,63 @@ public static void Uncover(ColumnNode col)
 }
 ```
 
-`Cover`メソッドは、指定した列ノードをリストから除外し、その列に属するすべての行ノードも他の列から除外します。これはノードのポインタ操作のみで行われ、物理的な削除・復元を伴わないため、探索時のバックトラックが高速です。`Uncover`はこの逆操作で、除外したノードを元の位置に戻します。これがダンシングリンクの最大の特徴であり、Algorithm Xの効率的な実装を可能にしています。
+`Cover`は列ノードを環状リストから除外し、同列に属する行の他ノードも順次削除する。`Uncover`はその逆操作であり、探索木におけるバックトラック時に必要となる。
 
-## 3. 再帰探索とダンシングリンクの活用
+# 4. C#実装における行列構築
+
+以下は、C#においてExact Cover行列を構築する手続きである：
+
+```csharp
+const int totalColumns = 4 * 81;
+var columnList = new ColumnNode[totalColumns];
+var head = new ColumnNode("head");
+
+// 列ノードの初期化
+foreach (int columnIndex in Enumerable.Range(0, totalColumns))
+{
+    var columnNode = new ColumnNode(columnIndex.ToString());
+    columnList[columnIndex] = columnNode;
+    previousColumn.Right = columnNode;
+    columnNode.Left = previousColumn;
+    previousColumn = columnNode;
+}
+previousColumn.Right = head;
+head.Left = previousColumn;
+
+// 各(r, c, n)に対して行を構築
+foreach (var (row, col, num) in
+  from row in Enumerable.Range(0, 9)
+  from col in Enumerable.Range(0, 9)
+  from num in Enumerable.Range(1, 9)
+  select (row, col, num))
+{
+    int block = row / 3 * 3 + (col / 3);
+    int[] columnIndices = [
+      row * 9 + col,
+      81 + row * 9 + (num - 1),
+      2 * 81 + col * 9 + (num - 1),
+      3 * 81 + block * 9 + (num - 1)
+    ];
+    AddDLXRow(columnList, row, col, num, columnIndices);
+}
+```
+
+各$(r, c, n)$ に対して生成される列インデックスは、以下の式により決定される：
+
+- マス制約: $i_1 = 9r + c$
+
+- 行制約: $i_2 = 81 + 9r + (n - 1)$
+
+- 列制約: $i_3 = 162 + 9c + (n - 1)$
+
+- ブロック制約: $i_4 = 243 + 9b + (n - 1)$
+
+ここで $b = 3 \left\lfloor \frac{r}{3} \right\rfloor + \left\lfloor \frac{c}{3} \right\rfloor$ とする。
+
+# 5. 探索アルゴリズム（Algorithm X）
+
+再帰的探索は、最小サイズの列を選択し、その列に対応する各行を試行的に選びながら、順次`Cover`操作を適用することで進行する。解が見つからなければ`Uncover`により状態を巻き戻す。
+
 ```csharp
 public bool Search(List<DLXNode> solution)
 {
@@ -150,10 +153,9 @@ public bool Search(List<DLXNode> solution)
 }
 ```
 
+# 6. 解の復元
 
-`Search`メソッドでは、最小サイズの列（制約が最も厳しい列）を選び、その列に属する各行を順に選択して再帰的に探索します。行を選択するたびに関連する列を`Cover`し、解が見つからなければ`Uncover`で元に戻します。ダンシングリンク構造により、これらの操作が高速かつ安全に行えるため、膨大な組み合わせの中から効率的に解を探索できます。
-
-## 4. 解の再構成
+最終的に得られたノード群から、$(r, c, n)$ を復元し、9×9の盤面を再構成する。
 
 ```csharp
 return solution.Aggregate(new string[9, 9], (result, node) =>
@@ -167,8 +169,10 @@ return solution.Aggregate(new string[9, 9], (result, node) =>
 });
 ```
 
-## まとめ
-DLXとAlgorithm Xを組み合わせた本実装は、ナンプレをExact Cover問題としてモデル化し、O(1)のCover/Uncover操作と最小列選択ヒューリスティックで高速に解を探索する。学術的にも実用的にも優れたアプローチである。
+# 7. 結論
+
+DLXとAlgorithm Xの組合せは、Exact Cover問題として定式化可能な数独に対して、極めて効率的な解法を提供する。
+特に、`Cover`／`Uncover`の $\mathcal{O}(n)$ 操作と最小列選択ヒューリスティックにより、探索空間を効果的に削減できる点が注目される。
 
 ### 参考文献
 

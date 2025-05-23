@@ -2,55 +2,65 @@ import fs from "node:fs/promises";
 import { GLOBAL } from "./variables";
 
 type MarkdownData<T extends object> = {
-  frontmatter: T;
-  file: string;
-  url: string;
+	frontmatter: T;
+	file: string;
+	url: string;
 };
-
 
 /**
  * This function processes the content of a directory and returns an array of processed content.
  * It takes a content type, a function to process the content, and an optional directory.
  * If no directory is provided, it defaults to the current working directory.
- * 
+ *
  * @param contentType the type of content to process
  * @param processFn the function to process the content
  * @param dir the directory to process the content from
  * @returns a promise that resolves to an array of processed content
  */
 export const processContentInDir = async <T extends object, K>(
-  contentType: "projects" | "blog",
-  processFn: (data: MarkdownData<T>) => K,
-  dir: string = process.cwd(),
+	contentType: "projects" | "blog",
+	processFn: (data: MarkdownData<T>) => K,
+	dir: string = process.cwd(),
 ) => {
-  const files = await fs.readdir(dir + `/src/pages/${contentType}`);
-  const markdownFiles = files
-    .filter((file: string) => file.endsWith(".md"))
-    .map((file) => file.split(".")[0]);
-  const readMdFileContent = async (file: string) => {
-    if (contentType === "projects") {
-      const content = import.meta
-        .glob(`/src/pages/projects/*.md`)
-        [`/src/pages/projects/${file}.md`]();
-      const data = (await content) as {
-        frontmatter: T;
-        file: string;
-        url: string;
-      };
-      return processFn(data);
-    } else {
-      const content = import.meta
-        .glob(`/src/pages/blog/*.md`)
-        [`/src/pages/blog/${file}.md`]();
-      const data = (await content) as {
-        frontmatter: T;
-        file: string;
-        url: string;
-      };
-      return processFn(data);
-    }
-  };
-  return await Promise.all(markdownFiles.map(readMdFileContent));
+	const files = await fs.readdir(`${dir}/src/pages/${contentType}`);
+	const markdownFiles = files
+		.filter((file: string) => file.endsWith(".md") || file.endsWith(".mdx"))
+		.map((file) => file.replace(/\.(md|mdx)$/, ""));
+	const readMdFileContent = async (file: string) => {
+		if (contentType === "projects") {
+			const modules = {
+				...import.meta.glob("/src/pages/projects/*.md"),
+				...import.meta.glob("/src/pages/projects/*.mdx"),
+			};
+			const ext = files
+				.find((f) => f.startsWith(`${file}.`))
+				?.split(".")
+				.pop();
+			const content = await modules[`/src/pages/projects/${file}.${ext}`]();
+			const data = content as {
+				frontmatter: T;
+				file: string;
+				url: string;
+			};
+			return processFn(data);
+		}
+		const modules = {
+			...import.meta.glob("/src/pages/blog/*.md"),
+			...import.meta.glob("/src/pages/blog/*.mdx"),
+		};
+		const ext = files
+			.find((f) => f.startsWith(`${file}.`))
+			?.split(".")
+			.pop();
+		const content = await modules[`/src/pages/blog/${file}.${ext}`]();
+		const data = content as {
+			frontmatter: T;
+			file: string;
+			url: string;
+		};
+		return processFn(data);
+	};
+	return await Promise.all(markdownFiles.map(readMdFileContent));
 };
 
 /**
@@ -60,9 +70,11 @@ export const processContentInDir = async <T extends object, K>(
  * @returns a shortened version of the content
  */
 export const getShortDescription = (content: string, maxLength = 20) => {
-  const splitByWord = content.split(" ");
-  const length = splitByWord.length;
-  return length > maxLength ? splitByWord.slice(0, maxLength).join(" ") + "..." : content;
+	const splitByWord = content.split(" ");
+	const length = splitByWord.length;
+	return length > maxLength
+		? `${splitByWord.slice(0, maxLength).join("·")}...`
+		: content;
 };
 
 /**
@@ -71,11 +83,11 @@ export const getShortDescription = (content: string, maxLength = 20) => {
  * @returns a string representing the processed timestamp
  */
 export const processArticleDate = (timestamp: string) => {
-  const date = new Date(timestamp);
-  const monthSmall = date.toLocaleString("default", { month: "short" });
-  const day = date.getDate();
-  const year = date.getFullYear();
-  return `${monthSmall} ${day}, ${year}`;
+	const date = new Date(timestamp);
+	const monthSmall = date.toLocaleString("default", { month: "short" });
+	const day = date.getDate();
+	const year = date.getFullYear();
+	return `${monthSmall} ${day}, ${year}`;
 };
 
 /**
@@ -85,8 +97,8 @@ export const processArticleDate = (timestamp: string) => {
  * @returns a string representing the source URL with the appropriate domain
  */
 export const generateSourceUrl = (
-  sourceUrl: string,
-  contentType: "projects" | "blog",
+	sourceUrl: string,
+	contentType: "projects" | "blog",
 ) => {
-  return `${GLOBAL.rootUrl}/${contentType}/${sourceUrl}`;
+	return `${GLOBAL.rootUrl}/${contentType}/${sourceUrl}`;
 };

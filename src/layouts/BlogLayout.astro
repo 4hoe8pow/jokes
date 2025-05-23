@@ -2,9 +2,9 @@
 import Section from "../components/common/Section.astro";
 import type { ArticleFrontmatter } from "../lib/types";
 import {
-  getShortDescription,
-  processArticleDate,
-  generateSourceUrl,
+	getShortDescription,
+	processArticleDate,
+	generateSourceUrl,
 } from "../lib/utils";
 import { GLOBAL } from "../lib/variables";
 import type { MarkdownLayoutProps } from "astro";
@@ -44,7 +44,7 @@ const sourceUrl = generateSourceUrl(frontmatter.filename, "blog");
       content={`${GLOBAL.rootUrl}/${GLOBAL.profileImage}`}
     />
     <meta http-equiv="content-language" content="ja" />
-    <meta name="language" content="English" />
+    <meta name="language" content="Japanese" />
     <link rel="canonical" href={sourceUrl} />
     <link
       rel="stylesheet"

@@ -1,0 +1,22 @@
+---
+import { LinkPreview } from "@astro-community/astro-embed-link-preview";
+const { id } = Astro.props;
+---
+
+<div class="link-preview-card">
+    <LinkPreview id={id} />
+</div>
+
+<style>
+    .link-preview-card {
+        background: #888;
+        border-radius: 1rem;
+        padding: 1.2rem;
+        margin: 1.2rem 0;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
+    }
+</style>

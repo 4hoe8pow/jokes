@@ -1,27 +1,33 @@
 {
-  "name": "jokes",
-  "type": "module",
-  "engines": {
-    "node": ">=18.20.8"
-  },
-  "version": "0.0.1",
-  "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro",
-    "preinstall": "npx only-allow pnpm"
-  },
-  "dependencies": {
-    "@astrojs/tailwind": "^6.0.2",
-    "@tailwindcss/typography": "^0.5.16",
-    "@tailwindcss/vite": "^4.1.7",
-    "astro": "^5.8.0",
-    "rehype-katex": "^7.0.1",
-    "remark-math": "^6.0.0",
-    "tailwindcss": "^4.1.7"
-  },
-  "devDependencies": {
-    "@types/node": "^22.15.21"
-  }
+	"name": "jokes",
+	"type": "module",
+	"version": "0.0.1",
+	"engines": {
+		"node": ">=18.20.8"
+	},
+	"scripts": {
+		"dev": "astro dev",
+		"build": "astro build",
+		"preview": "astro preview",
+		"astro": "astro",
+		"lint": "biome lint --write .",
+		"fmt": "biome format . --write",
+		"preinstall": "npx only-allow pnpm"
+	},
+	"dependencies": {
+		"@astro-community/astro-embed-link-preview": "^0.2.2",
+		"@astrojs/mdx": "^4.3.0",
+		"@astrojs/sitemap": "^3.4.0",
+		"@astrojs/tailwind": "^6",
+		"@tailwindcss/typography": "^0.5.16",
+		"@tailwindcss/vite": "^4",
+		"astro": "^5",
+		"rehype-katex": "^7",
+		"remark-math": "^6",
+		"tailwindcss": "^4"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@types/node": "^22.15.21"
+	}
 }
