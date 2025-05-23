@@ -24,24 +24,36 @@ export const processContentInDir = async <T extends object, K>(
 ) => {
 	const files = await fs.readdir(`${dir}/src/pages/${contentType}`);
 	const markdownFiles = files
-		.filter((file: string) => file.endsWith(".md"))
-		.map((file) => file.split(".")[0]);
+		.filter((file: string) => file.endsWith(".md") || file.endsWith(".mdx"))
+		.map((file) => file.replace(/\.(md|mdx)$/, ""));
 	const readMdFileContent = async (file: string) => {
 		if (contentType === "projects") {
-			const content = import.meta
-				.glob("/src/pages/projects/*.md")
-				[`/src/pages/projects/${file}.md`]();
-			const data = (await content) as {
+			const modules = {
+				...import.meta.glob("/src/pages/projects/*.md"),
+				...import.meta.glob("/src/pages/projects/*.mdx"),
+			};
+			const ext = files
+				.find((f) => f.startsWith(`${file}.`))
+				?.split(".")
+				.pop();
+			const content = await modules[`/src/pages/projects/${file}.${ext}`]();
+			const data = content as {
 				frontmatter: T;
 				file: string;
 				url: string;
 			};
 			return processFn(data);
 		}
-		const content = import.meta
-			.glob("/src/pages/blog/*.md")
-			[`/src/pages/blog/${file}.md`]();
-		const data = (await content) as {
+		const modules = {
+			...import.meta.glob("/src/pages/blog/*.md"),
+			...import.meta.glob("/src/pages/blog/*.mdx"),
+		};
+		const ext = files
+			.find((f) => f.startsWith(`${file}.`))
+			?.split(".")
+			.pop();
+		const content = await modules[`/src/pages/blog/${file}.${ext}`]();
+		const data = content as {
 			frontmatter: T;
 			file: string;
 			url: string;

@@ -4,7 +4,7 @@ export const GLOBAL = {
 	// Site metadata
 	username: "Yu Tokunaga",
 	rootUrl: "https://grill-ware.com",
-	shortDescription: "A tech blog by a hands-on engineer.",
+	shortDescription: "/var/dump.d",
 	longDescription:
 		"Born in Miyazaki, Japan. Master's in information science (theoretical foundations). Experienced in backend/API server development with Rust, and frontend work with React/Next.js. Comfortable with database design and full-stack web app development. Hobbies include 3D modeling (Blender, Houdini) and indie game development. Sports experience: 6 years table tennis, 4 years ice hockey, 6 years kabaddi.",
 
