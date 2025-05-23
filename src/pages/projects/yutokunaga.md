@@ -4,7 +4,7 @@ title: ❤️ About Me
 description: 宮崎県出身のエンジニア。APIサーバやWebアプリ開発、3Dモデリング、個人ゲーム開発など。
 tags: ["rust", "react", "3d", "game-dev"]
 githubUrl: https://github.com/4hoe8pow
-timestamp: 2025-05-22T00:00:00+00:00
+timestamp: 1994-06-10T00:00:00+00:00
 featured: true
 filename: yutokunaga
 ---
