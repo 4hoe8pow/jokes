@@ -4,7 +4,7 @@ title: 計算複雑性理論の未解決問題：P vs NP問題
 description: P、NP、NP完全、NP困難の定義と「P=NPか？」という計算理論最大の未解決問題を解説
 tags: ["計算複雑性", "P vs NP", "NP完全", "NP困難", "理論計算機科学"]
 time: 10
-featured: false
+featured: true
 timestamp: 2025-05-26T10:00:00+09:00
 filename: p_vs_np
 ---
