@@ -9,39 +9,38 @@ timestamp: 2025-03-20T07:39:03+00:00
 filename: diff_lcs
 ---
 
-# Rustで最長共通部分列を用いたファイル差分ツールの実装
-
 ## はじめに
 
-ファイル間の差分検出はソフトウェア開発に不可欠な機能です。
-本稿では、Rustで最長共通部分列（Longest Common Subsequence; LCS）アルゴリズムを活用し、行単位で差分を検出するツールを自作する手法を解説します。
+ファイル間の差分検出はソフトウェア開発に不可欠な機能です。  
+本稿では、Rustで最長共通部分列（Longest Common Subsequence; LCS）アルゴリズムを活用し、行単位で差分を検出するツールを実装する方法を紹介します。
 
 ---
 
 ## LCSアルゴリズムの概要
 
-LCSは、2つのシーケンス \(A = a_1 a_2 \cdots a_n\) と \(B = b_1 b_2 \cdots b_m\) の中で、順序を保ちながら共通する最長の部分列を求めます。
+LCSは、2つのシーケンス $$A = a_1 a_2 \cdots a_n$$ と $$B = b_1 b_2 \cdots b_m$$ の中で、順序を保ちながら共通する最長の部分列を求めます。
+
 動的計画法により、以下の再帰式でテーブルを構築します。
 
-\[
+$$
 dp[i][j] =
 \begin{cases}
 dp[i-1][j-1] + 1 & \text{if } a_i = b_j \\
 \max(dp[i-1][j], dp[i][j-1]) & \text{otherwise}
 \end{cases}
-\]
+$$
 
-ここで、\(dp[i][j]\) は \(A\) の先頭から \(i\) 文字、\(B\) の先頭から \(j\) 文字までのLCSの長さを表します。
+ここで、$$dp[i][j]$$ は $$A$$ の先頭から $$i$$ 文字、$$B$$ の先頭から $$j$$ 文字までのLCSの長さを表します。
 
 ### 計算量
 
 このアルゴリズムの計算量は、
 
-\[
+$$
 \mathcal{O}(n \times m)
-\]
+$$
 
-となり、空間計算量も同様に \(\mathcal{O}(n \times m)\) です。
+となり、空間計算量も同様に $$\mathcal{O}(n \times m)$$ です。
 
 ---
 
@@ -58,6 +57,7 @@ fn read_lines(path: &str) -> io::Result<Vec<String>> {
     let reader = BufReader::new(file);
     reader.lines().collect()
 }
+```
 
 ### LCSテーブル構築
 
