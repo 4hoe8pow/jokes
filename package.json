@@ -16,8 +16,8 @@
 	},
 	"dependencies": {
 		"@astro-community/astro-embed-link-preview": "^0.2.2",
-		"@astrojs/mdx": "^4.3.0",
-		"@astrojs/sitemap": "^3.4.0",
+		"@astrojs/mdx": "^4.3.1",
+		"@astrojs/sitemap": "^3.4.1",
 		"@astrojs/tailwind": "^6",
 		"@tailwindcss/typography": "^0.5.16",
 		"@tailwindcss/vite": "^4",
@@ -27,7 +27,7 @@
 		"tailwindcss": "^4"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.9.4",
-		"@types/node": "^22.15.21"
+		"@biomejs/biome": "^2.1.2",
+		"@types/node": "^24.1.0"
 	}
 }

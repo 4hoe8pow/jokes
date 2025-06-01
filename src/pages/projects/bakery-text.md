@@ -11,8 +11,8 @@ filename: bakery-text
 
 ## The Details
 
-[https://bakery-text.jocarium.productions/](https://bakery-text.jocarium.productions/) にアクセスするだけで、すぐにプレイ可能なWebブラウザゲームです。
-ゲームはCUI（キャラクタユーザインタフェース）風のスタイルで進行し、キーボードからコマンドを入力してパン屋を経営していきます。
+[Bakery Text](https://bakery-text-grillware.vercel.app) 、Webブラウザゲームです。
+ゲームはCUI風のスタイルで進行し、キーボードからコマンドを入力してパン屋を経営していきます。
 
 本作は専用アプリのインストール不要で、ゲームエンジンを使用していない軽量なWeb実装です。
 デスクトップ環境でのプレイを推奨します。
