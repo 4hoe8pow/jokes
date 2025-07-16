@@ -11,7 +11,15 @@ filename: cat_1_2
 
 ## 1.1 圏（Category）の定義
 
+
 **圏**（category）とは、対象と射（morphism）の集まりであり、以下の公理に従って構造化されたものをいう。
+
+```haskell
+-- 圏の型クラス定義
+class Category cat where
+  id  :: cat a a
+  (.) :: cat b c -> cat a b -> cat a c
+```
 
 ### 定義（圏）
 
@@ -33,23 +41,51 @@ filename: cat_1_2
 
 ### 【1】結合律（Associativity）
 
+
 任意の射 $f : X \to Y$, $g : Y \to Z$, $h : Z \to W$ に対して、
 $$
 h \circ (g \circ f) = (h \circ g) \circ f
 $$
 
+```haskell
+-- 結合律のイメージ
+-- h . (g . f) == (h . g) . f
+-- これはHaskellの(.)演算子が満たす性質
+```
+
 ### 【2】単位律（Identity laws）
+
 
 任意の射 $f : X \to Y$ に対して、
 $$
 \mathrm{id}_Y \circ f = f = f \circ \mathrm{id}_X
 $$
 
+```haskell
+-- 単位律のイメージ
+-- id . f == f == f . id
+-- Haskellのid関数と(.)演算子で自然に成り立つ
+```
+
 ---
 
 ## 1.3 図式による視覚化
 
+
 合成と恒等射の挙動は**可換図式（commutative diagram）**で表される。
+
+```haskell
+-- 関数合成の例
+f :: Int -> String
+f = show
+
+g :: String -> [Char]
+g = reverse
+
+h :: Int -> [Char]
+h = g . f
+-- h 5 == reverse (show 5) == "5"
+```
 
 #### 合成の図式例：
 
@@ -81,14 +117,30 @@ X        Y
 
 ### 例1：集合の圏 $\mathbf{Set}$
 
-- **対象**：集合
-- **射**：写像（関数）$f : X \to Y$
-- **恒等射**：恒等関数 $\mathrm{id}_X(x) = x$
-- **合成**：関数の合成
+
+```haskell
+-- Haskellの関数型 (->) は圏の例
+instance Category (->) where
+  id x = x
+  (g . f) x = g (f x)
+```
 
 ### 例2：群の圏 $\mathbf{Grp}$
 
+
 群の圏 $\mathbf{Grp}$ は、圏論的公理体系に則り、次のように定義される：
+
+```haskell
+-- 群準同型の型クラス例（参考）
+class Group g where
+  op  :: g -> g -> g
+  e   :: g
+  inv :: g -> g
+
+-- 群準同型写像
+isHom :: (Group g, Group h) => (g -> h) -> g -> g -> Bool
+isHom f x y = f (op x y) == op (f x) (f y)
+```
 
 - **対象（object）**：群 $G$。すなわち、集合 $G$ と二項演算 $\cdot : G \times G \to G$、単位元 $e \in G$、逆元 $g^{-1}$ の存在により、群公理を満たすもの。
 - **射（morphism）**：群準同型 $f : G \to H$。すなわち、任意の $g_1, g_2 \in G$ に対し $f(g_1 g_2) = f(g_1) f(g_2)$ を満たす写像。
@@ -118,7 +170,16 @@ X        Y
 
 ## 圏の構造的公理体系
 
+
 圏 $\mathcal{C}$ は、以下のデータと公理により定義される：
+
+```haskell
+-- 圏の構造を抽象化した型クラス
+class Category cat where
+  id  :: cat a a
+  (.) :: cat b c -> cat a b -> cat a c
+-- これらは結合律・単位律を満たす必要がある
+```
 
 - **対象（object）**：$\mathrm{Ob}(\mathcal{C})$ は圏 $\mathcal{C}$ の対象全体の類。
 - **射（morphism）**：任意の $X, Y \in \mathrm{Ob}(\mathcal{C})$ に対し、$X$ から $Y$ への射の集合 $\mathrm{Hom}_{\mathcal{C}}(X, Y)$ が与えられる。各射 $f \in \mathrm{Hom}_{\mathcal{C}}(X, Y)$ は $f : X \to Y$ と表記される。
