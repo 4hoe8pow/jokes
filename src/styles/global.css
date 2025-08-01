@@ -66,8 +66,8 @@
 		"Hina Mincho", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 	--color-zag-dark: var(--color-neutral-900);
 	--color-zag-light: var(--color-neutral-100);
-	--color-zag-dark-muted: var(--color-neutral-600);
-	--color-zag-light-muted: var(--color-neutral-400);
+	--color-zag-dark-muted: var(--color-neutral-800);
+	--color-zag-light-muted: var(--color-neutral-50);
 	--color-zag-accent-light: var(--color-emerald-400);
 	--color-zag-accent-light-muted: var(--color-emerald-300);
 	--color-zag-accent-dark: var(--color-emerald-600);
@@ -173,5 +173,35 @@
 	:where(.dark, .dark *) .katex-mathml,
 	:where(.dark, .dark *) .katex-html {
 		color: var(--color-zag-light);
+	}
+	/* テーブルのダークモード対応 */
+	table {
+		color: var(--color-zag-dark);
+		border-color: var(--color-zag-dark-muted);
+	}
+	:where(.dark, .dark *) table {
+		color: var(--color-zag-light);
+		border-color: var(--color-zag-light-muted);
+	}
+	th,
+	td {
+		color: inherit;
+		border-color: inherit;
+	}
+	thead {
+		color: var(--color-zag-dark);
+	}
+	:where(.dark, .dark *) thead {
+		color: var(--color-zag-light);
+	}
+	tr {
+		border-color: inherit;
+	}
+	/* テーブルの行ストライプ */
+	tbody tr:nth-child(even) {
+		background-color: var(--color-zag-light-muted);
+	}
+	:where(.dark, .dark *) tbody tr:nth-child(even) {
+		background-color: var(--color-zag-dark-muted);
 	}
 }

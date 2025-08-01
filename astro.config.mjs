@@ -5,6 +5,7 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
+import rehypeMermaid from "rehype-mermaid";
 
 export default defineConfig({
 	vite: {
@@ -12,7 +13,11 @@ export default defineConfig({
 	},
 	markdown: {
 		remarkPlugins: [remarkMath],
-		rehypePlugins: [rehypeKatex],
+		rehypePlugins: [rehypeKatex, rehypeMermaid],
+		syntaxHighlight: {
+			type: "shiki",
+			excludeLangs: ["mermaid", "math"],
+		},
 	},
 	site: "https://jocarium.productions",
 	integrations: [mdx(), sitemap()],
