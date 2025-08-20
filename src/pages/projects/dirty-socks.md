@@ -8,9 +8,7 @@ featured: true
 filename: dirty-socks
 ---
 
-# DIRTY SOCKS 仕様まとめ（SwiftUI / Composable Architecture）
-
-## アプリ概要
+## 概要
 - **アプリ名**: DIRTY SOCKS  
   iOS / SwiftUI / SwiftData ベース
 - **開発方針**: SwiftUI単独、UIKit/Unity/UE5 不使用  
@@ -20,7 +18,7 @@ filename: dirty-socks
 - **Composable Architecture (MVVM禁止)**  
   - View は軽量
   - `@StateObject` や `@ObservedObject` で GameState / PlayerState / EnemyState を購読
-  - Action は State 側で処理、テスト容易
+  - Action は State 側で処理
 
 ## セッション・ゲーム進行
 | 項目             | 内容                                                                                                | 補足                                                                                                   |
@@ -44,43 +42,71 @@ filename: dirty-socks
 | **操作演出**       | リアルタイム制、操作待ちはボタンハイライト                                                                             | ログやタイマー表示と組み合わせてプレイヤーに緊張感を演出                                                                        |
 | **テスト容易性**     | Composable Architecture + State分離                                                                 | Unitテストは GameState / PlayerState / EnemyState に集中。View は軽量。UIテストは HomeView → EscapeInGameView の流れで可能 |
 
-## 推奨フォルダ構成（画面遷移版）
+## フォルダ構成
 
 ```sh
+
 DIRTY SOCKS/
 ├─ DIRTY SOCKS/
-│ ├─ App/
-│ │ └─ DIRTY_SOCKSApp.swift ← Appエントリポイント、HomeViewを最初に表示
-│ │
-│ ├─ Views/
-│ │ ├─ HomeView.swift ← 現場選択・パーティ編成画面
-│ │ ├─ EscapeInGameView.swift ← 旧 ContentView、プレイ画面
-│ │ ├─ LogView.swift ← ログ表示
-│ │ ├─ ControlPanelView.swift ← 操作パネル
-│ │ └─ EnemyView.swift ← 敵表示や出現アニメーション
-│ │
-│ ├─ State/
-│ │ ├─ GameState.swift ← ゲーム全体状態
-│ │ ├─ PlayerState.swift ← パーティ・操作中のキャラクター状態
-│ │ └─ EnemyState.swift ← 敵生成・退却・ログ管理
-│ │
-│ ├─ Models/
-│ │ └─ LogEntry.swift ← ログエントリ / SwiftDataモデル
-│ │
-│ ├─ Resources/
-│ │ ├─ Assets.xcassets ← 靴下や背景など画像
-│ │ ├─ DIRTY_SOCKS.xcstrings ← String Catalog
-│ │ └─ Sounds/ ← 効果音・BGM
-│ │
-│ └─ Utilities/
-│ ├─ Extensions.swift ← View / String / Timer など拡張
-│ └─ Helpers.swift ← 汎用関数
+│  ├─ App/
+│  │   └─ DIRTY_SOCKSApp.swift         ← App エントリポイント、TabView をルートに配置
+│  │
+│  ├─ Views/
+│  │   ├─ HomeView/
+│  │   │   ├─ HomeView.swift            ← TabView の Home タブ全体
+│  │   │   ├─ UserLatestProfileView.swift  ← RankCircle / LevelBar / StatsCard / RecentPlayCard
+│  │   │   ├─ GenbaSelectView.swift     ← 現場選択 / EscapeInGameView への入口
+│  │   │   └─ TasksView.swift           ← デイリー / ウィークリー / イベントタスク表示
+│  │   │
+│  │   ├─ RankingView.swift             ← ランキング・ハイスコア
+│  │   ├─ FriendsView.swift             ← フレンド管理、進捗確認
+│  │
+│  │   ├─ InventoryView/
+│  │   │   └─ SocksListView.swift       ← グリッド表示の靴下コレクション
+│  │   │
+│  │   ├─ ForumView/
+│  │   │   └─ ForumView.swift           ← チャンネル・投稿一覧 / 投稿作成
+│  │   │
+│  │   ├─ GachaView/
+│  │   │   └─ GachaView.swift           ← ガチャ UI / 横スクロールカード
+│  │   │
+│  │   ├─ SettingsView/
+│  │   │   ├─ AccountView.swift
+│  │   │   ├─ LanguageView.swift
+│  │   │   ├─ AudioView.swift
+│  │   │   └─ AppInfoView.swift
+│  │   │
+│  │   └─ EscapeInGameView.swift        ← 旧 ContentView / ゲーム画面
+│  │
+│  ├─ State/
+│  │   ├─ GameState.swift               ← ゲームプレイ全体の状態管理
+│  │   ├─ PlayerState.swift             ← パーティ・操作中キャラクター管理
+│  │   ├─ EnemyState.swift              ← 敵生成・ログ管理
+│  │   ├─ UserState.swift               ← ユーザー進捗・獲得靴下・通算スコア
+│  │   ├─ TaskState.swift               ← タスク進捗管理
+│  │   └─ GachaState.swift              ← ガチャ確率・履歴管理
+│  │
+│  ├─ Models/
+│  │   ├─ LogEntry.swift
+│  │   ├─ Enemy.swift
+│  │   ├─ PlayerCharacter.swift
+│  │   ├─ Sock.swift                     ← 靴下キャラクター
+│  │   └─ Task.swift
+│  │
+│  ├─ Resources/
+│  │   ├─ Assets.xcassets
+│  │   ├─ DIRTY_SOCKS.xcstrings
+│  │   └─ Sounds/
+│  │
+│  └─ Utilities/
+│      ├─ Extensions.swift
+│      └─ Helpers.swift
 │
 ├─ DIRTY SOCKSTests/
-│ └─ GameStateTests.swift ← 状態管理の単体テスト
+│  └─ GameStateTests.swift
 │
 └─ DIRTY SOCKSUITests/
-└─ DIRTY_SOCKSUITests.swift ← ボタン操作やログ表示などUIテスト
+    └─ DIRTY_SOCKSUITests.swift
 ```
 
 ### 設計ポイント
