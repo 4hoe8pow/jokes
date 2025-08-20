@@ -17,7 +17,7 @@ filename: dirty-socks
 ## アーキテクチャ
 - **Composable Architecture (MVVM禁止)**  
   - View は軽量
-  - `@StateObject` や `@ObservedObject` で GameState / PlayerState / EnemyState を購読
+  - `@StateObject` や `@ObservedObject` で GameState / PlayerState / SockState / EnemyState を購読
   - Action は State 側で処理
 
 ## セッション・ゲーム進行
@@ -32,7 +32,10 @@ filename: dirty-socks
 | **ゲーム状態**      | GameEvent: idle / enemyEncounter                                                                  | View 依存なしで State で一元管理。操作待ち・敵出現状態を明確化                                                                  |
 | **操作アクション**    | PlayerAction: attack / evade / escape                                                             | ボタンは恒久表示。操作待ちはハイライト表示で視覚的に緊張感を演出                                                                    |
 | **敵構造**        | 無数のキーパー(洗濯機、物干し竿、引き出し)                                                                            | ログで戦闘経過表現、敵画像は靴下で統一。GameState で生成・退却・衝突管理                                                            |
-| **プレイヤーパーティ**  | 4キャラクター選択してパーティ行動                                                                                 | 各キャラクター固有スキルあり。HomeViewで選択し GameState に反映                                                             |
+| **プレイヤーパーティ**  | 4キャラクター選択してパーティ行動                                                                                 | 各靴下固有スキルあり。HomeViewで選択し GameState に反映                                                             |
+| **靴下パラメータ**   | 各 Sock が保持: {hp, attack, durability, resilience, empathy, speed, expression, focus, decision, charm, jump, logic, facilitation} | プレイヤーごとではなく靴下ごとに独立保持。戦闘や行動結果に反映。                                                             |
+| **レベルシステム**   | レベル＝累積経験値（小数1桁まで）                                                                                  | 経験値10獲得でレベル+10。0.1など小刻み取得も可能。整数制ではなく実数制。                                                         |
+| **スコア記録**      | 逃亡成功数 / パーティ人数（例: 3/4）+ 経過時間                                                                 | 全員逃亡成功でクリアだが、部分逃亡 (2/4, 3/4, 0/4) もスコアとして保存。                                                           |
 | **UI構造**       | - 背景: LinearGradient + GlassEffect<br>- ログ領域: ScrollView + LazyVStack<br>- 操作パネル: VStack + HStack | ボタン押下中もログ蓄積。操作待ちは視覚的ハイライト。ログスクロール追従                                                                 |
 | **ローカライズ**     | String Catalog (FString)                                                                          | `String.LocalizationValue`で管理。GUIで多言語追加可能。NSLocalizedString非依存                                      |
 | **データ永続化**     | SwiftData / In-Memory                                                                             | 1プレイ完結型。セッション終了で全削除。バックグラウンドでの一時保持は設計次第                                                             |
@@ -40,7 +43,6 @@ filename: dirty-socks
 | **ログ寿命**       | プレイ中のみ                                                                                            | バックグラウンド復帰時は保持。試合終了で全削除                                                                             |
 | **課金 / マネタイズ** | なし（MVP段階）                                                                                         | 将来的に広告や課金要素追加可                                                                                      |
 | **操作演出**       | リアルタイム制、操作待ちはボタンハイライト                                                                             | ログやタイマー表示と組み合わせてプレイヤーに緊張感を演出                                                                        |
-| **テスト容易性**     | Composable Architecture + State分離                                                                 | Unitテストは GameState / PlayerState / EnemyState に集中。View は軽量。UIテストは HomeView → EscapeInGameView の流れで可能 |
 
 ## フォルダ構成
 
