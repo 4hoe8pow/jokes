@@ -1,6 +1,6 @@
 ---
 layout: ../../layouts/BlogLayout.astro
-title: iOS 26 Beta で Firestore 通信時に nw_connection_get_connected_socket_block_invoke
+title: iOS 26 Beta で Firestore 通信時に TCP接続エラー
 description: Xcode 26
 tags: ["Swift", "Firebase"]
 time: 5
