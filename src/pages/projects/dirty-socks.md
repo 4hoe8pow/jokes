@@ -1,10 +1,10 @@
 ---
 layout: ../../layouts/ProjectLayout.astro
-title: 🧦dirty socks
+title: 🧦 dirty socks
 description: テキスト主体靴下ゲーム
 tags: ["Swift"]
 timestamp: 2025-08-20T10:03:00+00:00
-featured: true
+featured: false
 filename: dirty-socks
 ---
 
@@ -44,76 +44,60 @@ filename: dirty-socks
 | **課金 / マネタイズ** | なし（MVP段階）                                                                                         | 将来的に広告や課金要素追加可                                                                                      |
 | **操作演出**       | リアルタイム制、操作待ちはボタンハイライト                                                                             | ログやタイマー表示と組み合わせてプレイヤーに緊張感を演出                                                                        |
 
-## フォルダ構成
+## 1. インゲーム・メカニクス基本コンセプト
 
-```sh
+**「清潔という名の恐怖からの逃走劇」**
 
-DIRTY SOCKS/
-├─ DIRTY SOCKS/
-│  ├─ App/
-│  │   └─ DIRTY_SOCKSApp.swift         ← App エントリポイント、TabView をルートに配置
-│  │
-│  ├─ Views/
-│  │   ├─ HomeView/
-│  │   │   ├─ HomeView.swift            ← TabView の Home タブ全体
-│  │   │   ├─ UserLatestProfileView.swift  ← RankCircle / LevelBar / StatsCard / RecentPlayCard
-│  │   │   ├─ GenbaSelectView.swift     ← 現場選択 / EscapeInGameView への入口
-│  │   │   └─ TasksView.swift           ← デイリー / ウィークリー / イベントタスク表示
-│  │   │
-│  │   ├─ RankingView.swift             ← ランキング・ハイスコア
-│  │   ├─ FriendsView.swift             ← フレンド管理、進捗確認
-│  │
-│  │   ├─ InventoryView/
-│  │   │   └─ SocksListView.swift       ← グリッド表示の靴下コレクション
-│  │   │
-│  │   ├─ ForumView/
-│  │   │   └─ ForumView.swift           ← チャンネル・投稿一覧 / 投稿作成
-│  │   │
-│  │   ├─ GachaView/
-│  │   │   └─ GachaView.swift           ← ガチャ UI / 横スクロールカード
-│  │   │
-│  │   ├─ SettingsView/
-│  │   │   ├─ AccountView.swift
-│  │   │   ├─ LanguageView.swift
-│  │   │   ├─ AudioView.swift
-│  │   │   └─ AppInfoView.swift
-│  │   │
-│  │   └─ EscapeInGameView.swift        ← 旧 ContentView / ゲーム画面
-│  │
-│  ├─ State/
-│  │   ├─ GameState.swift               ← ゲームプレイ全体の状態管理
-│  │   ├─ PlayerState.swift             ← パーティ・操作中キャラクター管理
-│  │   ├─ EnemyState.swift              ← 敵生成・ログ管理
-│  │   ├─ UserState.swift               ← ユーザー進捗・獲得靴下・通算スコア
-│  │   ├─ TaskState.swift               ← タスク進捗管理
-│  │   └─ GachaState.swift              ← ガチャ確率・履歴管理
-│  │
-│  ├─ Models/
-│  │   ├─ LogEntry.swift
-│  │   ├─ Enemy.swift
-│  │   ├─ PlayerCharacter.swift
-│  │   ├─ Sock.swift                     ← 靴下キャラクター
-│  │   └─ Task.swift
-│  │
-│  ├─ Resources/
-│  │   ├─ Assets.xcassets
-│  │   ├─ DIRTY_SOCKS.xcstrings
-│  │   └─ Sounds/
-│  │
-│  └─ Utilities/
-│      ├─ Extensions.swift
-│      └─ Helpers.swift
-│
-├─ DIRTY SOCKSTests/
-│  └─ GameStateTests.swift
-│
-└─ DIRTY SOCKSUITests/
-    └─ DIRTY_SOCKSUITests.swift
-```
+プレイヤーは4体の汚れた靴下（パーティ）を操作し、彼らを待ち受ける「洗濯」という名の運命から逃れることを目指す。この世界における敵やトラップは、すべて「清潔」「純粋」「無垢」な存在として描かれる。靴下たちは**汚れるほどに個性を強め、本来の力を発揮する**が、洗い清められる（デバフを受ける）と弱体化してしまう。ホラーとは、純白の恐怖である。
 
-### 設計ポイント
-- **State分離**: GameState / PlayerState / EnemyState は View から独立
-- **Composable View**: EscapeInGameView は LogView / ControlPanelView / EnemyView を組み合わせ
-- **画面遷移**: HomeView でパーティや現場を選択 → EscapeInGameView に渡す
-- **テスト容易性**: View は軽量、State 集中で単体テストとUIテスト分離
-- **リアルタイム演出**: タイマー + ログ + ボタンハイライトで緊張感を演出
+## 2. コアメカニクス：ダーティネス（汚れ度）
+
+### 2.1. 概要
+- 各靴下が持つ0%〜100%のパラメータ。セッション開始時は常に0%（真っ白）。
+- 現場内のギミックやイベントを通じて変動する。
+- **メリット:** ダーティネスが高いほど、靴下の基礎パラメータ（attack, durabilityなど）にプラス補正がかかり、特定のスキルが解放・強化される。
+- **デメリット:** ダーティネスが一定値を超えると、後述するUI/UXを通じてプレイヤーが得られる情報が欠落していく。
+
+### 2.2. UI/UX連動：朽ちるログ吹き出し
+- 数値パラメータを直接表示せず、ログの吹き出しのビジュアルでダーティネスを表現する。
+- **0-10%:** 透明に近い清潔な吹き出し。ログの存在感が薄い。
+- **20-40%:** 少し黄ばみやシミが現れ、生活感が滲み出す。
+- **50-70%:** 黒ずみや毛玉風テクスチャが混ざり、文字がかすれ始める。「育っている」ことが直感的にわかる。
+- **80-90%:** 枠が崩れ、文字が滲む。異様な圧を放つ。
+- **100%:** 吹き出しは破片と化し、文字はノイズ混じり（例:「■■が■■した！」）となり、ほぼ判読不能になる。最強の状態であると同時に、最も情報が得にくい状態となる。
+
+---
+
+## 3. ゲームフロー
+
+1.  **エリア進行:** 現場（ステージ）は複数の「エリア」で構成される。最終エリアからの脱出でクリア。
+2.  **状況ログ生成 (4秒タイマー):** 現在のエリアの環境や靴下たちの様子がテキストで自動描写され、世界への没入を促す。
+3.  **イベント/ギミックとの遭遇:** エリアに配置されたオブジェクトに接触、または時間経過でイベントが発生。プレイヤーに**"Ask"（問いかけ）**が提示される。
+4.  **非同期コマンド入力:** "Ask"に対し、プレイヤーは4体の靴下それぞれに異なる指令を非同期的に選択する。選択肢は各靴下のパラメータやスキルに依存する。
+5.  **行動結果判定:** 各靴下の行動がパラメータに基づいて成否判定され、結果がログとして流れる。HP、ダーティネス、状況がリアルタイムに変化する。
+6.  **キーパーとのエンカウンター (6秒タイマー):** 「清潔な」敵対存在と遭遇。戦闘はターン制ではなく、特殊な状況イベントとして発生。「やり過ごす」「無力化する」ことで脅威を脱する。
+
+---
+
+## 4. ギミック＆イベント設計
+
+### 4.1. 設計思想
+- 個別の事象をマスターで管理するのではなく、**「効果（Effects）」を組み合わせる**ことで、多様なギミックとイベントを柔軟に生成する。
+- すべてのギミック/イベントは、HPや状態異常だけでなく、**必ずダーティネス（汚れ度）に影響を与える**。
+
+### 4.2. ギミック/イベント分類表
+
+| Id | Type | Identifier | LogName | Description |
+|:---|:---|:---|:---|:---|
+| 1 | GIMMICK | `drainagePipe` | 排水溝 | 【効果:ワープ/汚れ度UP】エリアをショートカットできるが、失敗するとダメージ。成功・失敗に関わらずヘドロで汚れる。 |
+| 2 | GIMMICK | `laundryNet` | 洗濯ネット | 【効果:ワープ/汚れ度DOWN】ワープ効果を持つが、ネットのせいで少し綺麗になってしまう罠。 |
+| 3 | GIMMICK | `dustyDeal` | ホコリ溜まりの取引所 | 【効果:トレード/汚れ度UP】自身のHP等をコストにアイテムを入手。取引の際にホコリまみれになる。 |
+| 4 | GIMMICK | `softenerSlot` | 柔軟剤の自動投入口 | 【効果:スタン/汚れ度DOWN】良い香りに惑わされ数ターン行動不能に。同時に汚れが大幅に落ち、弱体化する。 |
+| 5 | EVENT | `bleachStain` | 漂白剤のシミ | 【効果:継続ダメージ/汚れ度DOWN】踏むと継続的にHPが減少し、汚れも落ち続ける最悪のトラップ。 |
+| 6 | ENVIRONMENT | `fanWind` | 換気扇の強風 | 【効果:強制移動】エリア全体に影響。数ターンの間、パーティが風に流され、意図しないマスへ移動させられる。 |
+| 7 | KEEPER | `pinchy` | 洗濯バサミ"ピンチー" | 【タイプ:攻撃型】巡回しており、接触した靴下を挟んで物理ダメージを与える。 |
+| 8 | KEEPER | `lintGolem` | 糸くずのゴーレム | 【タイプ:捕縛型】HPの低い靴下を捕縛し、汚れを吸い取って弱体化させる。 |
+| 9 | KEEPER | `yoshie` | シミの亡霊"ヨシエ" | 【タイプ:特殊/ホラー】普段は無害なログを発するが、特定の条件下で豹変し、パーティ全体の汚れを吸収して凶暴化するボス存在。 |
+| 10 | EVENT | `mysteriousStain` | 謎のシミ | 【効果:予兆/恐怖演出】接触するたびに不気味なログが連打され、強力なキーパーの出現が近いことを示唆する。 |
+| 11 | ENVIRONMENT | `humidifierMist` | 加湿器の霧 | 【効果:地形変化/汚れ度DOWN】エリア全体が湿気に覆われ、パーティ全体の汚れ度が徐々に低下する。 |
+| 12 | GIMMICK | `greaseStain` | 油汚れのシミ | 【効果:バフ/汚れ度UP】踏むとHPが少量減る代わりに、汚れ度が大幅に上昇し、防御力に一時的なバフがかかる。 |
