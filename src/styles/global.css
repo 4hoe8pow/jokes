@@ -178,6 +178,10 @@
 	table {
 		color: var(--color-zag-dark);
 		border-color: var(--color-zag-dark-muted);
+		display: block;
+		width: 100%;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
 	}
 	:where(.dark, .dark *) table {
 		color: var(--color-zag-light);

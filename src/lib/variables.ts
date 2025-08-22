@@ -4,7 +4,7 @@ export const GLOBAL = {
 	// Site metadata
 	username: "Yu Tokunaga",
 	rootUrl: "https://jocarium.productions",
-	shortDescription: "/var/dump.d",
+	shortDescription: "",
 	longDescription:
 		"Born in Miyazaki, Japan. Master's in information science (theoretical foundations). Experienced in backend/API server development with Rust, and frontend work with React/Next.js. Comfortable with database design and full-stack web app development. Hobbies include 3D modeling (Blender, Houdini) and indie game development. Sports experience: 6 years table tennis, 4 years ice hockey, 6 years kabaddi.",
 
@@ -14,8 +14,8 @@ export const GLOBAL = {
 	youtubeProfile: "https://www.youtube.com/@kokimi-great",
 
 	// Common text names used throughout the site
-	articlesName: "Articles",
-	projectsName: "Projects",
+	articlesName: "📌 Pinned Articles",
+	projectsName: "📌 Pinned Projects",
 	viewAll: "View All",
 
 	// Common descriptions used throughout the site

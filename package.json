@@ -16,10 +16,10 @@
 	},
 	"dependencies": {
 		"@astro-community/astro-embed-link-preview": "^0.2.2",
-		"@astrojs/mdx": "^4.3.3",
-		"@astrojs/sitemap": "^3.4.2",
+		"@astrojs/mdx": "^4.3.7",
+		"@astrojs/sitemap": "^3.6.0",
 		"@astrojs/tailwind": "^6",
-		"@tailwindcss/typography": "^0.5.16",
+		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4",
 		"astro": "^5",
 		"rehype-katex": "^7",
@@ -28,7 +28,7 @@
 		"tailwindcss": "^4"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.1.4",
-		"@types/node": "^24.2.1"
+		"@biomejs/biome": "^2.2.6",
+		"@types/node": "^24.8.1"
 	}
 }

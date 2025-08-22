@@ -1,119 +1,227 @@
 ---
 layout: ../../layouts/ProjectLayout.astro
-title: 🧦dirty socks
-description: テキスト主体靴下ゲーム
-tags: ["Swift"]
-timestamp: 2025-08-20T10:03:00+00:00
-featured: true
+title: 🧦 Dirty Socks
+description: 汚れた靴下たちを脱出させる Data-Driven Rougelike 
+tags: ["Swift UI"]
+githubUrl: https://github.com/4hoe8pow/bakery_text
+timestamp: 2025-08-28T09:49:00+00:00
+featured: false
 filename: dirty-socks
 ---
 
-## 概要
-- **アプリ名**: DIRTY SOCKS  
-  iOS / SwiftUI / SwiftData ベース
-- **開発方針**: SwiftUI単独、UIKit/Unity/UE5 不使用  
-  古典的テキストRPG風ログゲーム。やりこみ要素重視。
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/9936d2fa-3d0d-4b7f-94f3-35715959b7f2" />
 
-## アーキテクチャ
-- **Composable Architecture (MVVM禁止)**  
-  - View は軽量
-  - `@StateObject` や `@ObservedObject` で GameState / PlayerState / SockState / EnemyState を購読
-  - Action は State 側で処理
+## 1. 概要
 
-## セッション・ゲーム進行
-| 項目             | 内容                                                                                                | 補足                                                                                                   |
-| -------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| **セッション**      | 1プレイ1セッション                                                                                        | 試合終了 or タスクキルで全ログ・GameState を初期化し HomeView に戻る                                                          |
-| **画面構成**       | - HomeView: 現場選択、パーティ編成、難易度設定<br>- EscapeInGameView: プレイ中の操作・ログ表示                                 | HomeView → EscapeInGameView に `NavigationStack` や `fullScreenCover` で遷移。選択情報を GameState に反映 |
-| **画面遷移**       | HomeView → EscapeInGameView                                                                       | セッション開始時に HomeView でパーティ・現場を選択しゲーム開始。終了後は HomeView に戻る                                           |
-| **ログ管理**       | LogEntry(Model) + SwiftData                                                                       | Timestamp・Message保持。In-Memoryでセッション完結型。バックグラウンド復帰時も保持可能                                            |
-| **ログ表示領域**     | ScrollView + LazyVStack、縦62%固定                                                                    | プレイ中ログはスクロール追従。操作パネルは恒久表示。ログ蓄積はボタン操作中も継続                                                            |
-| **タイマー**       | - ログ追加タイマー（4秒間隔）<br>- エンカウンタータイマー（6秒間隔）                                                           | Combine または GameState 内で管理。View破棄時に自動停止可能                                                              |
-| **ゲーム状態**      | GameEvent: idle / enemyEncounter                                                                  | View 依存なしで State で一元管理。操作待ち・敵出現状態を明確化                                                                  |
-| **操作アクション**    | PlayerAction: attack / evade / escape                                                             | ボタンは恒久表示。操作待ちはハイライト表示で視覚的に緊張感を演出                                                                    |
-| **敵構造**        | 無数のキーパー(洗濯機、物干し竿、引き出し)                                                                            | ログで戦闘経過表現、敵画像は靴下で統一。GameState で生成・退却・衝突管理                                                            |
-| **プレイヤーパーティ**  | 4キャラクター選択してパーティ行動                                                                                 | 各靴下固有スキルあり。HomeViewで選択し GameState に反映                                                             |
-| **靴下パラメータ**   | 各 Sock が保持: {hp, attack, durability, resilience, empathy, speed, expression, focus, decision, charm, jump, logic, facilitation} | プレイヤーごとではなく靴下ごとに独立保持。戦闘や行動結果に反映。                                                             |
-| **レベルシステム**   | レベル＝累積経験値（小数1桁まで）                                                                                  | 経験値10獲得でレベル+10。0.1など小刻み取得も可能。整数制ではなく実数制。                                                         |
-| **スコア記録**      | 逃亡成功数 / パーティ人数（例: 3/4）+ 経過時間                                                                 | 全員逃亡成功でクリアだが、部分逃亡 (2/4, 3/4, 0/4) もスコアとして保存。                                                           |
-| **UI構造**       | - 背景: LinearGradient + GlassEffect<br>- ログ領域: ScrollView + LazyVStack<br>- 操作パネル: VStack + HStack | ボタン押下中もログ蓄積。操作待ちは視覚的ハイライト。ログスクロール追従                                                                 |
-| **ローカライズ**     | String Catalog (FString)                                                                          | `String.LocalizationValue`で管理。GUIで多言語追加可能。NSLocalizedString非依存                                      |
-| **データ永続化**     | SwiftData / In-Memory                                                                             | 1プレイ完結型。セッション終了で全削除。バックグラウンドでの一時保持は設計次第                                                             |
-| **外部API / DB** | Firebase                                                                                          | View 直結で購読可能。リアルタイム反映。必要に応じ GameState に橋渡し                                                             |
-| **ログ寿命**       | プレイ中のみ                                                                                            | バックグラウンド復帰時は保持。試合終了で全削除                                                                             |
-| **課金 / マネタイズ** | なし（MVP段階）                                                                                         | 将来的に広告や課金要素追加可                                                                                      |
-| **操作演出**       | リアルタイム制、操作待ちはボタンハイライト                                                                             | ログやタイマー表示と組み合わせてプレイヤーに緊張感を演出                                                                        |
+### タイトル
+**Dirty Socks**
 
-## フォルダ構成
+### キャッチコピー
+**よごれのつよさ**
 
-```sh
+### コンセプト
+- 靴下が汚れるほど力を増すが、UIはどんどん汚れて見づらくなる
+- 毎回変わるマップで探索するローグライク体験
+- コメディとホラーが入り混じる寸劇や隠しコマンドで発見の楽しみ
+- 強くなることと見えなくなることのジレンマが遊びの軸
 
-DIRTY SOCKS/
-├─ DIRTY SOCKS/
-│  ├─ App/
-│  │   └─ DIRTY_SOCKSApp.swift         ← App エントリポイント、TabView をルートに配置
-│  │
-│  ├─ Views/
-│  │   ├─ HomeView/
-│  │   │   ├─ HomeView.swift            ← TabView の Home タブ全体
-│  │   │   ├─ UserLatestProfileView.swift  ← RankCircle / LevelBar / StatsCard / RecentPlayCard
-│  │   │   ├─ GenbaSelectView.swift     ← 現場選択 / EscapeInGameView への入口
-│  │   │   └─ TasksView.swift           ← デイリー / ウィークリー / イベントタスク表示
-│  │   │
-│  │   ├─ RankingView.swift             ← ランキング・ハイスコア
-│  │   ├─ FriendsView.swift             ← フレンド管理、進捗確認
-│  │
-│  │   ├─ InventoryView/
-│  │   │   └─ SocksListView.swift       ← グリッド表示の靴下コレクション
-│  │   │
-│  │   ├─ ForumView/
-│  │   │   └─ ForumView.swift           ← チャンネル・投稿一覧 / 投稿作成
-│  │   │
-│  │   ├─ GachaView/
-│  │   │   └─ GachaView.swift           ← ガチャ UI / 横スクロールカード
-│  │   │
-│  │   ├─ SettingsView/
-│  │   │   ├─ AccountView.swift
-│  │   │   ├─ LanguageView.swift
-│  │   │   ├─ AudioView.swift
-│  │   │   └─ AppInfoView.swift
-│  │   │
-│  │   └─ EscapeInGameView.swift        ← 旧 ContentView / ゲーム画面
-│  │
-│  ├─ State/
-│  │   ├─ GameState.swift               ← ゲームプレイ全体の状態管理
-│  │   ├─ PlayerState.swift             ← パーティ・操作中キャラクター管理
-│  │   ├─ EnemyState.swift              ← 敵生成・ログ管理
-│  │   ├─ UserState.swift               ← ユーザー進捗・獲得靴下・通算スコア
-│  │   ├─ TaskState.swift               ← タスク進捗管理
-│  │   └─ GachaState.swift              ← ガチャ確率・履歴管理
-│  │
-│  ├─ Models/
-│  │   ├─ LogEntry.swift
-│  │   ├─ Enemy.swift
-│  │   ├─ PlayerCharacter.swift
-│  │   ├─ Sock.swift                     ← 靴下キャラクター
-│  │   └─ Task.swift
-│  │
-│  ├─ Resources/
-│  │   ├─ Assets.xcassets
-│  │   ├─ DIRTY_SOCKS.xcstrings
-│  │   └─ Sounds/
-│  │
-│  └─ Utilities/
-│      ├─ Extensions.swift
-│      └─ Helpers.swift
-│
-├─ DIRTY SOCKSTests/
-│  └─ GameStateTests.swift
-│
-└─ DIRTY SOCKSUITests/
-    └─ DIRTY_SOCKSUITests.swift
+### プレイスタイル
+- **iOS限定**
+- **シングルプレイ**
+- **1ステージあたり5〜20分**
+
+---
+
+## 2. 世界観
+- 片方だけよく行方不明になる、やさぐれ靴下たちが主人公
+- 正義感はなく、悪友のようなノリで冒険する
+- 視界の代わりはUIログとネットワークマップ
+- ゴールは「脱出ハッチ」を探し当てること
+
+---
+
+## 3. ノード（場所）
+マップは複数の「ノード」で構成されます。
+
+| ノード                 | 内容                                           |
+| ---------------------- | ---------------------------------------------- |
+| START                  | ゲーム開始地点                                 |
+| 敵                     | 戦闘が発生。勝てばハッチのヒント入手           |
+| 洗浄                   | ダーティネスを軽減。ただし少し弱体化する        |
+| スキット               | ミニドラマやホラー演出。ヒントも隠されている   |
+| 大輪軒                 | 飲食店。寄り道で追加ヒントが手に入る           |
+| アンロックハッチノード | 到達するとハッチが有効化される                  |
+| ハッチノード           | 有効化後にたどり着けば、その現場から脱出成功   |
+
+### 期間限定イベント
+- 特殊スキット
+- 限定大輪軒
+
+---
+
+## 4. 遊びの流れ
+- 六角形セルのマップを一筆書きで探索
+- 靴下キャラ4体を操作し、全18現場の脱出に挑戦
+- 脱出条件：
+  1. 1体がアンロックハッチ到達
+  2. 別の1体がハッチ到達
+
+### 制約
+- 一度通ったセルは再通行不可
+- 靴下同士はすれ違えない
+
+### ダーティネス
+- 移動するたびに蓄積
+- **軽度**：文字ログが濁る
+- **中度**：グリッチやモザイク演出
+- **重度**：UIがほぼ使えなくなる
+- 洗浄ノードで軽減可能
+- 汚れはデメリットだけでなく、戦闘や探索を有利にする「力」にもなる
+
+### プレイモード
+プレイヤーは2つのモードから選択して現場へ挑戦できる。
+
+- **Casual（フリープレイ）**  
+  - 自由なシードでマップを生成
+  - 記録は「自己ベストスコア」としてのみ保存
+  - ランキングには反映されない
+  - 練習や気軽なプレイ向け
+
+- **Trial（ランキングイベント）**  
+  - 運営が定義する「10日ごとの固定シード」でマップ生成
+  - 誰がプレイしても同一条件
+  - 記録はランキングに反映
+  - イベント名は「Trial XX」（XX = 実施回数）としてカウントアップ
+ 
+```mermaid
+flowchart TD
+    A[ゲーム開始] --> B[ノード移動]
+    B --> X[ダーティネス増加]
+    X --> C{ノードタイプ判定}
+
+    %% 敵ノード
+    C -->|敵| D[戦闘開始]
+    D --> E{戦闘結果}
+    E -->|勝利| K[ヒント・演出表示]
+    E -->|敗北| G[靴下脱落]
+    G --> H{パーティ残数 > 0?}
+    H -->|はい| B
+    H -->|いいえ| I[ゲームオーバー]
+
+    %% 洗浄ノード
+    C -->|洗浄| J[ダーティネス軽減]
+    J --> B
+
+    %% スキット・大輪軒
+    C -->|スキット/大輪軒| K
+
+    %% ハッチ関連
+    C -->|アンロックハッチ| L[ハッチ有効化]
+    L --> B
+    C -->|ハッチノード| M{ハッチ有効化済?}
+    M -->|はい| N[次の現場へ]
+    M -->|いいえ| B
+
+    %% 戦闘勝利後は演出表示
+    K --> B
 ```
 
-### 設計ポイント
-- **State分離**: GameState / PlayerState / EnemyState は View から独立
-- **Composable View**: EscapeInGameView は LogView / ControlPanelView / EnemyView を組み合わせ
-- **画面遷移**: HomeView でパーティや現場を選択 → EscapeInGameView に渡す
-- **テスト容易性**: View は軽量、State 集中で単体テストとUIテスト分離
-- **リアルタイム演出**: タイマー + ログ + ボタンハイライトで緊張感を演出
+---
+
+## 5. キャラクターと育成
+- 靴下キャラは8つのパラメータを持つ
+- XPを振り分けて自由に成長可能
+- パラメータによって、ダーティネスの溜まり方やイベント発生が変化
+
+| パラメータ                | 意味       | 影響する要素                       |
+| ------------------------- | ---------- | ---------------------------------- |
+| Vexation［もどかしさ］     | 行動に対する苛立ち | 移動コスト・選択肢に影響           |
+| Ineptness［拙さ］          | 技量不足         | 戦闘の失敗率に影響                 |
+| Dolour［嘆き深さ］        | 感情の重さ       | ダーティネスの蓄積量               |
+| Fragility［脆さ］         | 壊れやすさ       | 全滅リスクや回避判定に影響         |
+| Baseness［浅ましさ］      | 卑しさ           | 戦闘・トラップ回避に影響           |
+| Precarity［危うさ］       | 不安定さ         | UI汚染による探索制約に影響         |
+| Karmic Burden［業の深さ］ | 因果の重さ       | 特殊イベント発生率に影響           |
+| Indecorum［はしたなさ］   | 不作法さ         | NPC反応・隠しヒント出現率に影響    |
+
+### ゆったり成長曲線
+- 初日：到達現場数 約3
+- 30日：到達現場数 約6
+- 1年：到達現場数 約12
+- 3年：到達現場数 約18
+
+---
+
+## 6. 報酬
+- **エメラルド**：通貨（スキン購入・広告削除）
+- **XP**：キャラクター育成用
+
+入手手段：
+- ステージクリア
+- 日次ミッション
+- 敵図鑑コンプリート
+- 隠しノード発見
+
+---
+
+## 7. 敵図鑑
+- 遭遇した敵が自動登録され、図鑑が埋まっていく
+- 種類・レア度・履歴を閲覧可能
+- コンプリート報酬としてエメラルドやXPを獲得
+
+---
+
+## 8. HATCH探索と示唆
+- 示唆は「確定情報」：方角や種類などを教えてくれる
+- 演出例：文字逆回転、ブラックアウト、次回予告、金文字やゼブラ柄
+- 重要情報はUIログで**強調表示**
+- 超低確率イベント（1/65536）では「希少靴下」と契約できる
+
+---
+
+## 9. 裏コマンド・隠し示唆
+- 確定ではなく「ほのめかし」として表現
+- 発見の驚きとSNSでの共有を狙う
+
+### 発動例
+- 画面端を3回タップ → HATCH方向が一瞬点滅
+- デバイスを振る → 「風の音」ログ＋端末バイブ
+- START地点で特定スワイプ → 「靴下の古い記憶」演出
+- 15秒無操作 → UIにじみで暗示
+
+---
+
+## 10. ステージ生成
+- 無向グラフで毎回異なるマップを自動生成
+- 全18現場（par777設計）
+  - ショート：5
+  - ミドル：9
+  - ロング：4
+
+### 生成手法
+- Cellular Automataで密度調整
+- BSPで通路に変化を持たせる
+
+### 探索保証
+- STARTとHATCHは必ず連結
+- Union-Findで検証
+- Dijkstra / A*で最短経路チェック
+- 戦略ルートはTSP的に評価
+
+---
+
+## 11. 技術と開発体制
+- **iOS限定・個人開発**（週10時間想定）
+- SwiftUIベースで軽量設計
+- UIはテキストログ中心
+- グリッチやモザイク演出で視覚的変化
+- VFXはHoudini 21.0で作成
+
+---
+
+## 12. マネタイズ
+- 基本無料＋アプリ内課金
+  - キャラスキン（色・柄違い）
+  - 広告削除
+- ガチャなし
+- ステージパック不要（自動生成で新鮮さを維持）

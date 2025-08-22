@@ -4,7 +4,7 @@ title: 🍛 CURRY.EXE
 description: 8つのモニタを切り替えながら多重タスク処理と危機管理を遂行する環境ストレス体験
 tags: ["UE5.6"]
 timestamp: 2025-08-05T11:08:00+00:00
-featured: true
+featured: false
 filename: curry-exe
 ---
 
