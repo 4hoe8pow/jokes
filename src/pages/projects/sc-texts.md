@@ -17,7 +17,7 @@ filename: sc-texts
 | 3   | [セキュア開発基礎](https://jocarium.productions/blog/sc_3)                     | Webアプリセキュリティ                           | XSS／SQLiなど攻撃と対策の実装知識。DevSecOps文脈にも接続。                               |
 | 4   | [通信防御基礎](https://jocarium.productions/blog/sc_4)                         | ネットワークセキュリティ                        | TLS／VPN／IDS/IPS／プロキシの理解。                                                      |
 | 5   | [攻撃手法と防衛策の実践論](https://jocarium.productions/blog/sc_5)               | マルウェア／DoS／C2通信など                     | 攻撃分類、IOC、EDR等による検知と対応。                                                   |
-| 6   | [ログ解析・フォレンジック論](https://jocarium.productions/blog/sc_6)             | ログ管理／証跡分析                              | 初動対応・時刻同期・証拠保全含む。フォレンジックの思考訓練も含む。                       |
+| 6   | [フォレンジック特論](https://jocarium.productions/blog/sc_6)             　　　　| ログ管理／証跡分析                              | 初動対応・時刻同期・証拠保全含む。フォレンジックの思考訓練も含む。                       |
 | 7   | [インシデント対応体制論](https://jocarium.productions/blog/sc_7)                 | CSIRT／初動対応                                 | 通報・分析・封じ込め・外部連携・事後対応の体制と実践。                                   |
 | 8   | [情報セキュリティ管理論](https://jocarium.productions/blog/sc_8)                 | ISMS／リスク管理／ガバナンス                    | PDCA、ポリシー策定、資産管理、脆弱性評価を含む統合管理枠組み。                           |
 | 9   | [法制度・ガイドライン論](https://jocarium.productions/blog/sc_9)                 | 法令遵守、各種ガイドライン                      | IPAガイドライン、不正アクセス禁止法、サイバーセキュリティ基本法、Pマーク制度等。         |
