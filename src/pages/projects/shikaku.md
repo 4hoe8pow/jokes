@@ -8,6 +8,8 @@ featured: true
 filename: shikaku
 ---
 
+<img width="1024" height="1024" alt="Generated Image September 19, 2025" src="https://github.com/user-attachments/assets/b1143078-0a46-4936-b9a7-3a8499c10892" />
+
 ## 1. プロジェクト概要
 
 「鹿く」と「ShikakuMLS」は、セキュアで責任ある新しいコミュニケーション文化を創造するための2つの主要プロジェクトです。
