@@ -7,6 +7,7 @@ time: 6
 featured: true
 timestamp: 2025-09-23T08:49:03+00:00
 filename: dns-beginner
+---
 
 ## 1. DNSの基本概念
 
