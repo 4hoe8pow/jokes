@@ -19,9 +19,10 @@ FX_HAULAGEは、Houdiniのカメラやロケーターノードを「運ぶ」こ
 |------|------|
 | ツール名 | FX_HAULAGE |
 | 目的 | Houdiniのカメラ/Null情報をAfter Effectsに直コンポ反映 |
-| AE側導入 | 不要（JSX生成も意識させず） |
+| AE側操作 | 不要（jsx実行無し） |
 | 対象ノード | カメラ、Null（Locator） |
-| 特徴 | スイッチャー対応、ワンクリック操作 |
+| 配布 | Orbolt による HDA 配布 |
+| 特徴 | ワンクリック操作、スイッチャー対応、純 HDA 完結 |
 
 ---
 
@@ -30,7 +31,7 @@ FX_HAULAGEは、Houdiniのカメラやロケーターノードを「運ぶ」こ
 | ボタン | 役割 | UX |
 |--------|------|------------|
 | **Connect AE** | AE起動確認・接続テスト | AE未起動時の警告表示、接続状態をHDA内に視覚化 |
-| **Export AE** | 選択カメラ/NullをAEに直コンポ反映 | JSX生成不要でワンクリック出力 |
+| **Export AE** | 選択カメラ/NullをAEに直コンポ反映 | jsx実行無しでワンクリック出力 |
 
 ---
 
@@ -41,12 +42,12 @@ FX_HAULAGEは、Houdiniのカメラやロケーターノードを「運ぶ」こ
 | ノード | 出力項目 | 補足 |
 |--------|----------|------|
 | **カメラ** | 位置、回転（Euler）、FOV → AE Zoom変換 | |
-| | Focus Distance（オプション） | 被写界深度対応 |
-| | Aperture / Lens Width（オプション） | 実写合成用 |
+| | Focus Distance | 被写界深度対応 |
+| | Aperture / Lens Width | 実写合成用 |
 | | スイッチャー対応 | アクティブカメラをデフォルト選択 |
 | | FPS自動取得 | HoudiniシーンとAEを同期 |
 | **Null / Locator** | 位置、回転、スケール、Opacity | 2D/3D追従用 |
-| | Extra 2D Layer生成オプション | テキストやエフェクトの追従を容易にする |
+| | Extra 2D Layer生成 | テキストやエフェクトの追従を容易にする |
 
 ### 3.2 オプション
 
@@ -98,7 +99,6 @@ FX_HAULAGEは、Houdiniのカメラやロケーターノードを「運ぶ」こ
 | 2 | FX_HAULAGE HDA選択、オプション確認 |
 | 3 | **Connect AE**で接続確認 |
 | 4 | **Export AE**で直コンポ生成 |
-| 5 | 必要に応じAdvancedオプションで詳細調整 |
 
 ---
 
