@@ -5,7 +5,7 @@ description: CUIライクなパン屋経営ゲームです。
 tags: ["react"]
 githubUrl: https://github.com/4hoe8pow/bakery_text
 timestamp: 2025-04-12T00:00:00+00:00
-featured: true
+featured: false
 filename: bakery-text
 ---
 
