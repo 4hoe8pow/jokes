@@ -4,7 +4,7 @@ title: セキュア開発基礎論
 description: XSS／SQLiなど攻撃と対策の実装知識。DevSecOps文脈にも接続。
 tags: ["Webアプリセキュリティ"]
 time: 10
-featured: true
+featured: false
 timestamp: 2025-08-04T10:58:00+00:00
 filename: sc_3
 ---
