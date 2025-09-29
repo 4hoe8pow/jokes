@@ -4,7 +4,7 @@ title: 🛡️情報処理安全確保総論 - 特製テキスト群
 description: セキュリティスペシャリストへの道
 tags: ["SC"]
 timestamp: 2025-08-04T12:41:00+00:00
-featured: true
+featured: false
 filename: sc-texts
 ---
 
