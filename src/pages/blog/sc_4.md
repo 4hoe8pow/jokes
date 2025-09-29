@@ -4,7 +4,7 @@ title: 通信防御基礎論
 description: TLS／VPN／IDS/IPS／プロキシの理解。ネットワーク層の攻撃と防御技術を体系的に解説。
 tags: ["ネットワークセキュリティ"]
 time: 10
-featured: true
+featured: false
 timestamp: 2025-08-04T13:36:00+00:00
 filename: sc_4
 ---
