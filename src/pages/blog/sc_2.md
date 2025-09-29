@@ -4,7 +4,7 @@ title: 認証・認可プロトコル論
 description: IDフェデレーション技術の構造理解（SAML／OAuth等）。
 tags: ["認証・認可"]
 time: 10
-featured: true
+featured: false
 timestamp: 2025-08-04T10:57:00+00:00
 filename: sc_2
 ---
