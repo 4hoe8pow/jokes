@@ -4,7 +4,7 @@ title: 暗号理論基礎
 description: セキュリティ全体の基盤。鍵交換・署名・ハッシュ等。
 tags: ["暗号技術"]
 time: 10
-featured: true
+featured: false
 timestamp: 2025-08-04T10:47:03+00:00
 filename: sc_1
 ---
