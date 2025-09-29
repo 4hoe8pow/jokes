@@ -4,7 +4,7 @@ title: 🐦‍🔥 RACK PALACE
 description: パワーラック特化型トレーニングジム構想骨子v1.1
 tags: ["Google Cloud", "Go"]
 timestamp: 2025-07-30T23:00:00+00:00
-featured: true
+featured: false
 filename: rackhouse
 ---
 
