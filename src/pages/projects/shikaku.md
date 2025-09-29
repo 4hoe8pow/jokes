@@ -4,7 +4,7 @@ title: 🫎 鹿く & ShikakuMLS 企画要旨
 description: エンドツーエンド暗号対応コミュニケーションプラットフォームと端末完結MLSライブラリ
 tags: ["Google Cloud", "CryptoKit", "E2EE", "MLS"]
 timestamp: 2025-09-18T11:46:00+00:00
-featured: true
+featured: false
 filename: shikaku
 ---
 
