@@ -4,7 +4,7 @@ title: (1,3節) 射の構造と公理
 description: 恒等射・射の合成・結合律により、圏の内部構造が定義される
 tags: ["圏論"]
 time: 15
-featured: true
+featured: false
 timestamp: 2025-07-22T14:10:03+00:00
 filename: cat_1_3
 ---
