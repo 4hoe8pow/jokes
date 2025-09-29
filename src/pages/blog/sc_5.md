@@ -4,7 +4,7 @@ title: 攻撃手法と防衛策の実践論
 description: マルウェア／DoS／C2通信など攻撃分類、IOC、EDR等による検知と対応。
 tags: ["攻撃手法と防衛策"]
 time: 10
-featured: true
+featured: false
 timestamp: 2025-08-04T13:41:00+00:00
 filename: sc_5
 ---
