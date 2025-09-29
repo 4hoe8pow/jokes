@@ -4,7 +4,7 @@ title: (2,1節) 関手の定義
 description: 圏から圏への構造保存写像であり、構造間の変換を記述する
 tags: ["圏論"]
 time: 15
-featured: true
+featured: false
 timestamp: 2025-07-22T14:20:03+00:00
 filename: cat_2_1
 ---
