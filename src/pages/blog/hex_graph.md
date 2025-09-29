@@ -4,7 +4,7 @@ title: ノード生成およびハニカムマップ生成アルゴリズム
 description: by ChatGPT
 tags: ["アルゴリズム"]
 time: 15
-featured: true
+featured: false
 timestamp: 2025-09-09T16:28:03+00:00
 filename: hex_graph
 ---
