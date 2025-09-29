@@ -4,7 +4,7 @@ title: 無向グラフの生成関数
 description: グラフ理論とRust 1.87
 tags: ["rust"]
 time: 2
-featured: true
+featured: false
 timestamp: 2025-08-26T10:10:31+00:00
 filename: treegen
 ---
