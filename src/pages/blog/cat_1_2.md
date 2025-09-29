@@ -4,7 +4,7 @@ title: (1,2節) 圏の構造と公理
 description: 対象と射、およびそれらの振る舞いを規定する公理体系
 tags: ["圏論"]
 time: 15
-featured: true
+featured: false
 timestamp: 2025-07-14T14:10:03+00:00
 filename: cat_1_2
 ---
