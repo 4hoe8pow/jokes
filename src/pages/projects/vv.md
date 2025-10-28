@@ -112,16 +112,22 @@ filename: vv
 - **依存関係管理**：lockfile監査、npm audit CI失敗条件
 - **透明性確保**：公開SBOM、Bug Bounty、透明性レポート提供
 - **CI/CDパイプライン設計（論理図）**
-  ```mermaid
-  graph LR
-      A[ソースコード (Rust)] --> B(依存性スキャン/SAST);
-      B --> C(再現性ビルド);
-      C --> D{Artifact Registry};
-      D --> E[SBOM生成/アタッチ];
-      E --> F(cosign署名/Binary Authorization);
-      F --> G[本番環境デプロイ];
-      G --> H(DASTスキャン);
-  ```
+
+```mermaid
+graph TB
+  %% ノード定義
+  A["ソースコード (Rust)"]:::source
+  B["依存性スキャン / SAST"]:::scan
+  C["再現性ビルド"]:::build
+  D["Artifact Registry"]:::registry
+  E["SBOM生成 / アタッチ"]:::sbom
+  F["cosign署名 / Binary Authorization"]:::sign
+  G["本番環境デプロイ"]:::deploy
+  H["DASTスキャン"]:::dast
+
+  %% フロー定義
+  A --> B --> C --> D --> E --> F --> G --> H
+```
 
 ### 3.5 ログ・監査 - 必須要件
 
